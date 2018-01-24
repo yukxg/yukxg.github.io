@@ -32,7 +32,7 @@ function(e, t, a) {
                     y: e.clientY - 5,
                     scale: 1,
                     alpha: 1,
-                    color: "rgb(" + ~~ (255 * Math.random()) + "," + ~~ (255 * Math.random()) + "," + ~~ (255 * Math.random()) + ")"
+                    color: "rgb(" + ~~ (255 * Math.random()) + "," + ~~ (182) + "," + ~~ (193) + ")"
                 }),
                 t.body.appendChild(a)
             } (e)
