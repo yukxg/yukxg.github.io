@@ -389,7 +389,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-01-25T17:34:02+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2018-01-25T18:13:44+08:00">
                 2018-01-25
               </time>
             
@@ -428,7 +428,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  868
+                  859
                 </span>
               
 
@@ -466,48 +466,15 @@
 
       
         
-          
-            <h1 id="浅谈Sleuth背后的原理—Dapper"><a href="#浅谈Sleuth背后的原理—Dapper" class="headerlink" title="浅谈Sleuth背后的原理—Dapper"></a>浅谈Sleuth背后的原理—Dapper</h1><h2 id="Dapper主要功能"><a href="#Dapper主要功能" class="headerlink" title="Dapper主要功能"></a>Dapper主要功能</h2><p>Dapper主要的功能是为了开发人员更好的观察分布式系统中的服务调用过程，优化链路，分析系统的耗时，从而发现并解决业务系统中存在的瓶颈。</p>
-<p>当业务变得复杂的时候，一个简单的客户端请求往往伴随着很多的不同的后端服务调用。例如：</p>
-<blockquote>
-<p>当用户在网页进行搜索的时候，这个请求会被发送到很多子系统用来处理广告，拼写检查，或者查找结果。而且用户对于耗时会很敏感。在这种universal search模型下，可能会有上百个服务参与到一个universal search的请求。</p>
-</blockquote>
-<p>这个时候一个开发工程师可以很明显看出延时的问题，但是并不能简单并且清晰地定位到问题的关键。因为服务间的调用错综复杂，查看log变得很耗时，而且一个工程师很难做到对所有调用的服务了如指掌。因此一个可能清晰的看到全局链路并且查看每个服务耗时的工具应运而生。</p>
-<p>这个模型或者服务需要满足如下两点需求:</p>
-<ol>
-<li>方便部署</li>
-<li>持续监测</li>
-</ol>
-<h2 id="Dapper数据结构"><a href="#Dapper数据结构" class="headerlink" title="Dapper数据结构"></a>Dapper数据结构</h2><p>Dapper相较之前的其他的tracing system而言主要的区别有:</p>
-<ol>
-<li>使用抽样方法来达到low-overhead，Sleuth在实现的时候采用的是水塘抽样。</li>
-<li>使用上的透明度：Sleuth基本做到了在开发人员无感知的情况下，收集链路信息。</li>
-</ol>
-<p>Dapper的架构主要包括了：tree，span，annoatation。</p>
-<ul>
-<li>一个tree由1个或多个span组成</li>
-<li>一个span是dapper里面的最基本的单位，一个span里面包含了一个span开始和结束的时间戳。我们可以把span理解为一对请求和返回。所以span是会成对出现的。同时span里面还包括了parent span id和trace id。所以我们可以通过这些信息来构造出完整的链路并且恢复有序的调用关系。</li>
-<li>因为span中记录的时间戳是来自于client或者不同的server，所以时间同步也是需要注意的一点。</li>
-</ul>
-<h2 id="Trace信息如何透传"><a href="#Trace信息如何透传" class="headerlink" title="Trace信息如何透传"></a>Trace信息如何透传</h2><p>在Dapper的论文里面和网上看到阿里的Eagle Eye都是通过threadLocal来实现的全局链路跟踪，就决定去研究一下threaLocal的工作原理。<br>总的来说，调用会有两种情况：</p>
-<ol>
-<li>线程/进程间的调用，例如：RPC，http，异步。</li>
-<li>线程内的调用。</li>
-</ol>
-<p>在Dapper里面:</p>
-<ol>
-<li>线程间的调用使用<strong>参数传递</strong></li>
-<li>线程内的调用使用<strong>ThreadLocal传递</strong></li>
-</ol>
-<p>线程间参数透传的方法:</p>
-<ol>
-<li>HTTP: 通过header来透传trace信息</li>
-<li>RPC: 通过自定义RPC协议<br>总的来说还是通过参数透传啦！这个可以通过修改通用库来实现无感知的透传。</li>
-</ol>
-<p>线程内参数透传的方法:<br>当当当<strong>ThreadLocal</strong><br>ThreadLocal其实是一个线程的局部变量，会和一个线程同生共死。通过ThreadLocal创建的变量只能被当前线程访问修改。<br>进入线程时，将Trace信息存储在ThreadLocal变量中，出线程时，从ThreadLocal变量中取出Trace信息，作为参数传递到下一个线程。</p>
-<p>Reference:<br><a href="https://www.jianshu.com/p/48ff456fb643" target="_blank" rel="noopener">https://www.jianshu.com/p/48ff456fb643</a><br><a href="https://research.google.com/pubs/pub36356.html" target="_blank" rel="noopener">https://research.google.com/pubs/pub36356.html</a></p>
-
-          
+          <h2 id="Dapper主要功能"><a href="#Dapper主要功能" class="headerlink" title="Dapper主要功能"></a>Dapper主要功能</h2><p>Dapper主要的功能是为了开发人员更好的观察分布式系统中的服务调用过程，优化链路，分析系统的耗时，从而发现并解决业务系统中存在的瓶颈。</p>
+<p>当业务变得复杂的时候，一个简单的客户端请求往往伴随着很多的不同的后端服务调用。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/25/dapper/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -679,9 +646,16 @@
       
         
           
-            <p>第一篇文章，今天搞定了NEXT主题背景的图案问题，加入了点击爱心的特效。作为一个不会写js的人，看js文件是一件很痛苦的事情。</p>
+          第一篇文章，今天搞定了NEXT主题背景的图案问题，加入了点击爱心的特效。作为一个不会写js的人，看js文件是一件很痛苦的事情。
 
           
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/24/Hello-World/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -833,7 +807,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">921</span>
+    <span title="Site words total count">912</span>
   
 </div>
 
